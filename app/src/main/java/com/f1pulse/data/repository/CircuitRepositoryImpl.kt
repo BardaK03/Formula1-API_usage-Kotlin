@@ -24,27 +24,39 @@ class CircuitRepositoryImpl @Inject constructor(
     override suspend fun refreshCircuits() {
         withContext(Dispatchers.IO) {
             try {
+                println("DEBUG: Attempting to fetch circuits from API")
                 val response = apiService.getCircuits()
-                if (response.success && response.data.isNotEmpty()) {
-                    val circuits = response.data.map { dto ->
+                println("DEBUG: Raw API response received - MRData structure available: ${response.mrData != null}")
+
+                // Extract circuits from the nested structure
+                val circuitsTable = response.mrData.circuitTable
+                if (circuitsTable != null && circuitsTable.circuits != null && circuitsTable.circuits.isNotEmpty()) {
+                    val circuitsList = circuitsTable.circuits
+                    println("DEBUG: Successfully received ${circuitsList.size} circuits")
+
+                    val circuits = circuitsList.map { circuit ->
+                        println("DEBUG: Processing circuit: ${circuit.circuitName}")
                         CircuitEntity(
-                            circuitId = dto.circuitId,
-                            circuitName = dto.circuitName,
-                            url = dto.url,
-                            locality = dto.location?.locality,
-                            country = dto.location?.country,
-                            lat = dto.location?.lat,
-                            longitude = dto.location?.long  // Using 'long' from LocationDto
+                            circuitId = circuit.circuitId,
+                            circuitName = circuit.circuitName,
+                            url = circuit.url,
+                            locality = circuit.location?.locality,
+                            country = circuit.location?.country,
+                            lat = circuit.location?.lat,
+                            longitude = circuit.location?.long
                         )
                     }
+                    println("DEBUG: Mapped ${circuits.size} circuits to entities")
                     circuitDao.insertCircuits(circuits)
                     println("DEBUG: Successfully inserted ${circuits.size} circuits into database")
                 } else {
-                    println("DEBUG: API returned unsuccessful response or empty data: ${response.message}")
+                    println("DEBUG: API returned empty circuit data")
+                    println("DEBUG: MRData structure: ${response.mrData}")
                 }
             } catch (e: Exception) {
                 // Log the error for debugging
                 println("DEBUG: Error refreshing circuits: ${e.message}")
+                println("DEBUG: Exception type: ${e.javaClass.name}")
                 e.printStackTrace()
                 throw e // Re-throw to propagate to the ViewModel
             }

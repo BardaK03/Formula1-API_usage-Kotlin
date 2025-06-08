@@ -103,7 +103,6 @@ fun DriverDetailScreen(
                             DriverInfoItem(label = "Number", value = driver?.permanentNumber)
                             DriverInfoItem(label = "Date of Birth", value = driver?.dateOfBirth)
                             DriverInfoItem(label = "Nationality", value = driver?.nationality)
-                            DriverInfoItem(label = "Team", value = driver?.team)
 
                             if (!driver?.url.isNullOrEmpty()) {
                                 HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))

@@ -1,6 +1,6 @@
 package com.f1pulse.data.remote
 
-import com.f1pulse.data.remote.model.CircuitResponse
+import com.f1pulse.data.remote.model.JolpicaCircuitResponse
 import com.f1pulse.data.remote.model.JolpicaDriverResponse
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -17,8 +17,8 @@ interface F1ApiService {
     suspend fun getDriverById(@Path("driverId") driverId: String): JolpicaDriverResponse
 
     @GET("f1/{year}/circuits.json")
-    suspend fun getCircuits(@Path("year") year: String = "2023"): CircuitResponse
+    suspend fun getCircuits(@Path("year") year: String = "2023"): JolpicaCircuitResponse
 
     @GET("f1/circuits/{circuitId}.json")
-    suspend fun getCircuitById(@Path("circuitId") circuitId: String): CircuitResponse
+    suspend fun getCircuitById(@Path("circuitId") circuitId: String): JolpicaCircuitResponse
 }

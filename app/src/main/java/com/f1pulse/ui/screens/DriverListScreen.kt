@@ -136,20 +136,6 @@ fun DriverCard(
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
-
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "Team: ",
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.SemiBold
-                )
-                Text(
-                    text = driver.team ?: "N/A",
-                    style = MaterialTheme.typography.bodyMedium
-                )
-            }
         }
     }
 }

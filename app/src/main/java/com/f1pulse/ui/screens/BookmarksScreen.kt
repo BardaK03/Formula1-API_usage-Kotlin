@@ -94,10 +94,6 @@ fun BookmarkCard(
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = driver.team ?: "Team: N/A",
-                    style = MaterialTheme.typography.bodyMedium
-                )
-                Text(
                     text = "Number: ${driver.permanentNumber ?: "N/A"}",
                     style = MaterialTheme.typography.bodySmall
                 )
