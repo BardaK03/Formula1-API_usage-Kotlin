@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "999109991483",
+    "project_id": "formula1kotlin",
+    "storage_bucket": "formula1kotlin.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:999109991483:android:eb7c0f64722daf145a501e",
+        "android_client_info": {
+          "package_name": "Formula.Unu.Kotlin"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDKRocS_sCPY9U2IQueKRo9QDLZ87R17c0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
