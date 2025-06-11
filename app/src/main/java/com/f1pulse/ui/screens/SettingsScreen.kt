@@ -19,20 +19,20 @@ import com.f1pulse.ui.screens.auth.AuthViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
-    isDarkTheme: Boolean = false,
-    onThemeToggle: (Boolean) -> Unit = {},
-    displayName: String = "",
-    onDisplayNameChange: (String) -> Unit = {},
-    onSaveDisplayName: () -> Unit = {},
     navController: NavController,
-    authViewModel: AuthViewModel = hiltViewModel()
+    authViewModel: AuthViewModel = hiltViewModel(),
+    settingsViewModel: SettingsViewModel = hiltViewModel()
 ) {
-    var name by remember { mutableStateOf(displayName) }
     val authState by authViewModel.authState.collectAsState()
     val isLoggedIn = authState is AuthState.Authenticated
     val username = if (authState is AuthState.Authenticated) {
         (authState as AuthState.Authenticated).displayName
     } else ""
+
+    // Collect theme state from SettingsViewModel
+    val isDarkTheme by settingsViewModel.isDarkTheme.collectAsState(initial = false)
+    val displayName by settingsViewModel.displayName.collectAsState(initial = "")
+    var name by remember { mutableStateOf(displayName) }
 
     Scaffold(
         topBar = {
@@ -73,7 +73,7 @@ fun SettingsScreen(
                         Text("Dark Mode")
                         Switch(
                             checked = isDarkTheme,
-                            onCheckedChange = onThemeToggle
+                            onCheckedChange = { settingsViewModel.setDarkTheme(it) }
                         )
                     }
                 }
@@ -165,8 +165,8 @@ fun SettingsScreen(
                         Spacer(modifier = Modifier.height(8.dp))
                         Button(
                             onClick = {
-                                onDisplayNameChange(name)
-                                onSaveDisplayName()
+                                settingsViewModel.setDisplayName(name)
+                                settingsViewModel.syncDisplayNameToFirebase()
                             },
                             modifier = Modifier.align(Alignment.End)
                         ) {

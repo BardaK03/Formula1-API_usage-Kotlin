@@ -36,6 +36,7 @@ import com.f1pulse.ui.screens.auth.AuthState
 import com.google.firebase.FirebaseApp
 import dagger.hilt.android.AndroidEntryPoint
 import androidx.compose.runtime.LaunchedEffect
+import com.f1pulse.ui.screens.SettingsViewModel
 
 private const val TAG = "MainActivity"
 
@@ -55,6 +56,7 @@ class MainActivity : ComponentActivity() {
             val driverListViewModel: DriverListViewModel = viewModel()
             val mainViewModel: MainViewModel = viewModel()
             val authViewModel: AuthViewModel = hiltViewModel()
+            val settingsViewModel: SettingsViewModel = hiltViewModel()
 
             val circuits by mainViewModel.circuits.collectAsState()
             val bookmarks by mainViewModel.bookmarks.collectAsState()
@@ -81,7 +83,7 @@ class MainActivity : ComponentActivity() {
                 }
             }
 
-            F1PulseTheme {
+            F1PulseTheme(settingsViewModel = settingsViewModel) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background

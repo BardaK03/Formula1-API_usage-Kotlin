@@ -123,18 +123,7 @@ fun F1PulseNavGraph(
         }
 
         composable("settings") {
-            val settingsViewModel: SettingsViewModel = hiltViewModel()
-            val isDarkTheme by settingsViewModel.isDarkTheme.collectAsState(initial = false)
-            val displayName by settingsViewModel.displayName.collectAsState(initial = "")
-
-            SettingsScreen(
-                isDarkTheme = isDarkTheme,
-                onThemeToggle = { settingsViewModel.setDarkTheme(it) },
-                displayName = displayName,
-                onDisplayNameChange = { settingsViewModel.setDisplayName(it) },
-                onSaveDisplayName = { settingsViewModel.syncDisplayNameToFirebase() },
-                navController = navController
-            )
+            SettingsScreen(navController = navController)
         }
     }
 }
