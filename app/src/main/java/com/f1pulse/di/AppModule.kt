@@ -1,7 +1,9 @@
 package com.f1pulse.di
 
 import android.content.Context
+import android.util.Log
 import androidx.room.Room
+import com.f1pulse.F1PulseApp
 import com.f1pulse.data.local.F1Database
 import com.f1pulse.data.remote.F1ApiService
 import com.f1pulse.data.repository.CircuitRepository
@@ -9,6 +11,7 @@ import com.f1pulse.data.repository.CircuitRepositoryImpl
 import com.f1pulse.data.repository.DriverRepository
 import com.f1pulse.data.repository.DriverRepositoryImpl
 import com.f1pulse.utils.userPreferencesDataStore
+import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -73,11 +76,20 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideDataStore(@ApplicationContext context: Context) = context.userPreferencesDataStore
+    fun provideDataStore(@ApplicationContext context: Context): androidx.datastore.core.DataStore<androidx.datastore.preferences.core.Preferences> = context.userPreferencesDataStore
 
     @Provides
     @Singleton
-    fun provideFirebaseAuth(): FirebaseAuth {
-        return Firebase.auth
+    fun provideFirebaseAuth(@ApplicationContext context: Context): FirebaseAuth {
+        try {
+            val auth = FirebaseAuth.getInstance()
+            // Disable automatic reCAPTCHA verification
+            auth.firebaseAuthSettings.setAppVerificationDisabledForTesting(true)
+            Log.d("AppModule", "Firebase Auth initialized with reCAPTCHA verification disabled")
+            return auth
+        } catch (e: Exception) {
+            Log.e("AppModule", "Error getting FirebaseAuth instance: ${e.message}")
+            throw e
+        }
     }
 }

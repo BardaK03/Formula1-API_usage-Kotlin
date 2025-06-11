@@ -1,9 +1,11 @@
 package com.f1pulse.ui.screens.auth
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.f1pulse.utils.SettingsDataStore
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.UserProfileChangeRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -11,6 +13,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
+
+private const val TAG = "AuthViewModel"
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
@@ -47,6 +51,7 @@ class AuthViewModel @Inject constructor(
                     _authState.value = AuthState.Error("Authentication failed")
                 }
             } catch (e: Exception) {
+                Log.e(TAG, "Login error: ${e.message}", e)
                 _authState.value = AuthState.Error(e.message ?: "Authentication failed")
             }
         }
@@ -56,11 +61,13 @@ class AuthViewModel @Inject constructor(
         viewModelScope.launch {
             _authState.value = AuthState.Loading
             try {
+                Log.d(TAG, "Registering user: $email")
+
                 val result = firebaseAuth.createUserWithEmailAndPassword(email, password).await()
                 val user = result.user
                 if (user != null) {
                     // Update user profile with display name
-                    val profileUpdates = com.google.firebase.auth.UserProfileChangeRequest.Builder()
+                    val profileUpdates = UserProfileChangeRequest.Builder()
                         .setDisplayName(displayName)
                         .build()
                     user.updateProfile(profileUpdates).await()
@@ -73,6 +80,7 @@ class AuthViewModel @Inject constructor(
                     _authState.value = AuthState.Error("Registration failed")
                 }
             } catch (e: Exception) {
+                Log.e(TAG, "Registration error: ${e.message}", e)
                 _authState.value = AuthState.Error(e.message ?: "Registration failed")
             }
         }
@@ -81,7 +89,7 @@ class AuthViewModel @Inject constructor(
     fun logout() {
         viewModelScope.launch {
             firebaseAuth.signOut()
-            settingsDataStore.clearPreferences()
+            settingsDataStore.setDisplayName("")
             _authState.value = AuthState.Unauthenticated
         }
     }
@@ -91,12 +99,4 @@ class AuthViewModel @Inject constructor(
             _authState.value = AuthState.Unauthenticated
         }
     }
-}
-
-sealed class AuthState {
-    object Initial : AuthState()
-    object Loading : AuthState()
-    object Unauthenticated : AuthState()
-    data class Authenticated(val displayName: String) : AuthState()
-    data class Error(val message: String) : AuthState()
 }
