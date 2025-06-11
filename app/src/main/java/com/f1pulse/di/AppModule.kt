@@ -35,7 +35,9 @@ object AppModule {
             context,
             F1Database::class.java,
             F1Database.DATABASE_NAME
-        ).build()
+        )
+        .fallbackToDestructiveMigration() // Handle schema changes by recreating the database
+        .build()
     }
 
     @Provides

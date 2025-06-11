@@ -70,10 +70,12 @@ class DriverListViewModel @Inject constructor(
         }
     }
 
-    fun toggleBookmark(driverId: String, isBookmarked: Boolean) {
+    fun toggleBookmark(driverId: String, isBookmarked: Boolean, userId: String) {
         viewModelScope.launch {
             try {
-                bookmarkDriverUseCase(driverId, isBookmarked)
+                bookmarkDriverUseCase(driverId, isBookmarked, userId)
+                // Reload the driver details to update UI state with the new bookmark status
+                loadDriverDetails(driverId)
             } catch (e: Exception) {
                 _error.value = e.message
             }

@@ -32,15 +32,15 @@ class RefreshDriversUseCase @Inject constructor(
 class BookmarkDriverUseCase @Inject constructor(
     private val repository: DriverRepository
 ) {
-    suspend operator fun invoke(driverId: String, isBookmarked: Boolean) {
-        repository.bookmarkDriver(driverId, isBookmarked)
+    suspend operator fun invoke(driverId: String, isBookmarked: Boolean, userId: String) {
+        repository.bookmarkDriver(driverId, isBookmarked, userId)
     }
 }
 
 class GetBookmarkedDriversUseCase @Inject constructor(
     private val repository: DriverRepository
 ) {
-    operator fun invoke(): Flow<List<DriverEntity>> {
-        return repository.getBookmarkedDrivers()
+    operator fun invoke(userId: String): Flow<List<DriverEntity>> {
+        return repository.getBookmarkedDrivers(userId)
     }
 }

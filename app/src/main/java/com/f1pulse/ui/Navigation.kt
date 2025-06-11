@@ -19,10 +19,13 @@ import com.f1pulse.ui.screens.HomeScreen
 import com.f1pulse.ui.screens.MainViewModel
 import com.f1pulse.ui.screens.SettingsScreen
 import com.f1pulse.ui.screens.SettingsViewModel
+import com.f1pulse.ui.screens.auth.AuthState
 import com.f1pulse.ui.screens.auth.AuthViewModel
 import com.f1pulse.ui.screens.auth.LoginScreen
 import com.f1pulse.ui.screens.auth.RegisterScreen
 import com.f1pulse.ui.screens.auth.WelcomeScreen
+import com.google.firebase.auth.FirebaseAuth
+import androidx.compose.runtime.LaunchedEffect
 
 @Composable
 fun F1PulseNavGraph(
@@ -34,7 +37,7 @@ fun F1PulseNavGraph(
 
     // Get auth state and redirect if needed
     when (authState) {
-        is com.f1pulse.ui.screens.auth.AuthState.Authenticated -> {
+        is AuthState.Authenticated -> {
             if (startDestination == "welcome") {
                 navController.navigate("home") {
                     popUpTo("welcome") { inclusive = true }
@@ -102,9 +105,19 @@ fun F1PulseNavGraph(
         composable("bookmarks") {
             val mainViewModel: MainViewModel = hiltViewModel()
             val bookmarks by mainViewModel.bookmarks.collectAsState()
+            val firebaseAuth = FirebaseAuth.getInstance()
+            val userId = firebaseAuth.currentUser?.uid ?: ""
+
+            // Load bookmarks for the current user when entering this screen
+            LaunchedEffect(userId) {
+                if (userId.isNotEmpty()) {
+                    mainViewModel.getBookmarks(userId)
+                }
+            }
+
             BookmarksScreen(
                 bookmarks = bookmarks,
-                onUnbookmark = { mainViewModel.unbookmark(it) },
+                onUnbookmark = { driver -> mainViewModel.unbookmark(driver, userId) },
                 navController = navController
             )
         }

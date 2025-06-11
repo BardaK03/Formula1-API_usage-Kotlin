@@ -14,6 +14,6 @@ data class DriverEntity(
     val permanentNumber: String?,
     val url: String?,
     val team: String?,
-    val isBookmarked: Boolean = false
+    val isBookmarked: Boolean = false,
+    val userId: String // New field to associate bookmark with a user
 )
-

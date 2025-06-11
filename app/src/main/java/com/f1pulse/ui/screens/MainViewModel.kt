@@ -32,7 +32,6 @@ class MainViewModel @Inject constructor(
 
     init {
         getCircuits()
-        getBookmarks()
     }
 
     private fun getCircuits() {
@@ -44,8 +43,8 @@ class MainViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    private fun getBookmarks() {
-        getBookmarkedDriversUseCase().onEach { bookmarkList ->
+    fun getBookmarks(userId: String) {
+        getBookmarkedDriversUseCase(userId).onEach { bookmarkList ->
             _bookmarks.value = bookmarkList
         }.launchIn(viewModelScope)
     }
@@ -60,9 +59,9 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun unbookmark(driver: DriverEntity) {
+    fun unbookmark(driver: DriverEntity, userId: String) {
         viewModelScope.launch {
-            updateDriverUseCase(driver.copy(isBookmarked = false))
+            updateDriverUseCase(driver.copy(isBookmarked = false), userId)
         }
     }
 }

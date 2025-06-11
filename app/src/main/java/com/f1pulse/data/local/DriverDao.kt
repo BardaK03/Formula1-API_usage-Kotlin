@@ -20,6 +20,6 @@ interface DriverDao {
     @Update
     suspend fun updateDriver(driver: DriverEntity)
 
-    @Query("SELECT * FROM drivers WHERE isBookmarked = 1")
-    fun getBookmarkedDrivers(): Flow<List<DriverEntity>>
+    @Query("SELECT * FROM drivers WHERE isBookmarked = 1 AND userId = :userId")
+    fun getBookmarkedDrivers(userId: String): Flow<List<DriverEntity>>
 }

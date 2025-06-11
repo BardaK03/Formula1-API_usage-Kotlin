@@ -21,8 +21,8 @@ class DriverRepositoryImpl @Inject constructor(
         return driverDao.getDriverById(id)
     }
 
-    override fun getBookmarkedDrivers(): Flow<List<DriverEntity>> {
-        return driverDao.getBookmarkedDrivers()
+    override fun getBookmarkedDrivers(userId: String): Flow<List<DriverEntity>> {
+        return driverDao.getBookmarkedDrivers(userId)
     }
 
     override suspend fun refreshDrivers() {
@@ -50,7 +50,8 @@ class DriverRepositoryImpl @Inject constructor(
                             permanentNumber = driver.permanentNumber ?: "",
                             url = driver.url ?: "",
                             team = "", // We don't have team info in this response
-                            isBookmarked = false
+                            isBookmarked = false,
+                            userId = "" // Set to empty or default, must be set properly when bookmarking
                         )
                     }
                     println("DEBUG: Mapped ${drivers.size} drivers to entities")
@@ -70,10 +71,10 @@ class DriverRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun bookmarkDriver(driverId: String, isBookmarked: Boolean) {
+    override suspend fun bookmarkDriver(driverId: String, isBookmarked: Boolean, userId: String) {
         withContext(Dispatchers.IO) {
             val driver = driverDao.getDriverByIdSync(driverId) ?: return@withContext
-            driverDao.updateDriver(driver.copy(isBookmarked = isBookmarked))
+            driverDao.updateDriver(driver.copy(isBookmarked = isBookmarked, userId = userId))
         }
     }
 }

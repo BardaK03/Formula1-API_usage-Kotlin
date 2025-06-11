@@ -108,7 +108,25 @@ class MainActivity : ComponentActivity() {
                             CircuitsScreen(circuits, navController)
                         }
                         composable("bookmarks") {
-                            BookmarksScreen(bookmarks, onUnbookmark = { mainViewModel.unbookmark(it) }, navController = navController)
+                            val userId = (authState as? AuthState.Authenticated)?.let {
+                                com.google.firebase.auth.FirebaseAuth.getInstance().currentUser?.uid
+                            } ?: ""
+
+                            // Load bookmarks for the current user when entering this screen
+                            // Adding navController.currentBackStackEntry as a key to ensure refresh when navigating back
+                            LaunchedEffect(userId, navController.currentBackStackEntry) {
+                                if (userId.isNotEmpty()) {
+                                    mainViewModel.getBookmarks(userId)
+                                }
+                            }
+
+                            BookmarksScreen(
+                                bookmarks,
+                                onUnbookmark = { driver ->
+                                    mainViewModel.unbookmark(driver, userId)
+                                },
+                                navController = navController
+                            )
                         }
                         composable("settings") {
                             SettingsScreen(navController = navController)

@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.google.firebase.auth.FirebaseAuth
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -24,6 +25,10 @@ fun DriverDetailScreen(
 ) {
     val scrollState = rememberScrollState()
 
+    // Get the current Firebase user ID
+    val firebaseAuth = FirebaseAuth.getInstance()
+    val currentUserId = firebaseAuth.currentUser?.uid ?: ""
+
     LaunchedEffect(driverId) {
         driverId?.let {
             viewModel.loadDriverDetails(it)
@@ -31,6 +36,14 @@ fun DriverDetailScreen(
     }
 
     val driver by viewModel.currentDriver.collectAsState()
+    val error by viewModel.error.collectAsState()
+
+    // Handle bookmark changes
+    LaunchedEffect(error) {
+        error?.let {
+            // Show error if needed
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -80,7 +93,9 @@ fun DriverDetailScreen(
                                 IconButton(
                                     onClick = {
                                         driver?.let {
-                                            viewModel.toggleBookmark(it.driverId, !it.isBookmarked)
+                                            if (currentUserId.isNotEmpty()) {
+                                                viewModel.toggleBookmark(it.driverId, !it.isBookmarked, currentUserId)
+                                            }
                                         }
                                     }
                                 ) {

@@ -8,7 +8,7 @@ import androidx.room.RoomDatabase
         DriverEntity::class,
         CircuitEntity::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class F1Database : RoomDatabase() {

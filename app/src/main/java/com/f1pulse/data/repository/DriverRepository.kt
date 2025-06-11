@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 interface DriverRepository {
     fun getAllDrivers(): Flow<List<DriverEntity>>
     fun getDriverById(id: String): Flow<DriverEntity?>
-    fun getBookmarkedDrivers(): Flow<List<DriverEntity>>
+    fun getBookmarkedDrivers(userId: String): Flow<List<DriverEntity>>
     suspend fun refreshDrivers()
-    suspend fun bookmarkDriver(driverId: String, isBookmarked: Boolean)
+    suspend fun bookmarkDriver(driverId: String, isBookmarked: Boolean, userId: String)
 }

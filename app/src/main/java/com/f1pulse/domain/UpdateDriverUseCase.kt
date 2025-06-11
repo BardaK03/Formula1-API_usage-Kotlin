@@ -7,7 +7,7 @@ import javax.inject.Inject
 class DriverUpdateUseCase @Inject constructor(
     private val repository: DriverRepository
 ) {
-    suspend operator fun invoke(driver: DriverEntity) {
-        repository.bookmarkDriver(driver.driverId, driver.isBookmarked)
+    suspend operator fun invoke(driver: DriverEntity, userId: String) {
+        repository.bookmarkDriver(driver.driverId, driver.isBookmarked, userId)
     }
 }
